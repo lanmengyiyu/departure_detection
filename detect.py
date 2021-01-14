@@ -60,7 +60,6 @@ def detect(save_img=False):
     img = torch.zeros((1, 3, imgsz, imgsz), device=device)  # init img
     _ = model(img.half() if half else img) if device.type != 'cpu' else None  # run once
     leave_frame = 0
-    leave = True
     for path, img, im0s, vid_cap, frame_num in dataset:
         img = torch.from_numpy(img).to(device)
         img = img.half() if half else img.float()  # uint8 to fp16/32
@@ -102,6 +101,7 @@ def detect(save_img=False):
                     s += f'{n} {names[int(c)]}s, '  # add to string
                 
                 cv2.rectangle(im0, (904, 292), (1374,774), (0,255,0), 2)
+                leave = True
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
@@ -124,8 +124,8 @@ def detect(save_img=False):
                             leave = False
                 if leave == True:
                     leave_frame = leave_frame + 1 
-                    leave_txt = "leave time: " + leave_frame
-                    cv2.putText(img, leave_txt , (40, 50), cv2.FONT_HERSHEY_PLAIN, 2.0, (0, 0, 255), 2)     
+                    leave_txt = "leave time: " + str(leave_frame)
+                    cv2.putText(im0, leave_txt , (800, 50), cv2.FONT_HERSHEY_PLAIN, 2.0, (0, 0, 255), 2)     
             # Print time (inference + NMS)
             print(f'{s}Done. ({t2 - t1:.3f}s)')
 
