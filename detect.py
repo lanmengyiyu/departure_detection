@@ -59,7 +59,9 @@ def detect(save_img=False):
     t0 = time.time()
     img = torch.zeros((1, 3, imgsz, imgsz), device=device)  # init img
     _ = model(img.half() if half else img) if device.type != 'cpu' else None  # run once
-    for path, img, im0s, vid_cap in dataset:
+    leave_frame = 0
+    leave = True
+    for path, img, im0s, vid_cap, frame_num in dataset:
         img = torch.from_numpy(img).to(device)
         img = img.half() if half else img.float()  # uint8 to fp16/32
         img /= 255.0  # 0 - 255 to 0.0 - 1.0
@@ -98,7 +100,8 @@ def detect(save_img=False):
                 for c in det[:, -1].unique():
                     n = (det[:, -1] == c).sum()  # detections per class
                     s += f'{n} {names[int(c)]}s, '  # add to string
-
+                
+                cv2.rectangle(im0, (904, 292), (1374,774), (0,255,0), 2)
                 # Write results
                 for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
@@ -108,9 +111,21 @@ def detect(save_img=False):
                             f.write(('%g ' * len(line)).rstrip() % line + '\n')
 
                     if save_img or view_img:  # Add bbox to image
-                        label = f'{names[int(cls)]} {conf:.2f}'
-                        plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
-
+                        if int(cls) != 0:
+                            continue
+                        height, width, _ = im0.shape
+                        x1, y1, x2, y2 = max(0,int(xyxy[0])), max(0,int(xyxy[1])), min(width,int(xyxy[2])), min(height,int(xyxy[3]))
+                        x_center = int((x1 + x2)/2)
+                        y_center = int((y1 + y2)/2)
+                        if x_center > 904 and x_center < 1374 and y_center > 292 and y_center < 774:
+                            label = f'{names[int(cls)]} {conf:.2f}'
+                            plot_one_box(xyxy, im0, label=label, color=colors[int(cls)], line_thickness=3)
+                            leave_frame = 0
+                            leave = False
+                if leave == True:
+                    leave_frame = leave_frame + 1 
+                    leave_txt = "leave time: " + leave_frame
+                    cv2.putText(img, leave_txt , (40, 50), cv2.FONT_HERSHEY_PLAIN, 2.0, (0, 0, 255), 2)     
             # Print time (inference + NMS)
             print(f'{s}Done. ({t2 - t1:.3f}s)')
 
