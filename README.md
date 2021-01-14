@@ -10,7 +10,7 @@ $ pip install -U -r requirements.txt
 
 ## Tutorials
 
-* [departure_detection-Notebook](https://github.com/lanmengyiyu/departure_detection/blob/master/departure_detection.ipynb) <a href="https://colab.research.google.com/github/lanmengyiyu/departure_detection/blob/master/departure_detection.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
+* [departure_detection-Notebook](https://github.com/lanmengyiyu/departure_detection/blob/main/departure_detection.ipynb) <a href="https://colab.research.google.com/github/lanmengyiyu/departure_detection/blob/main/departure_detection.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
 
 
 ## Inference
